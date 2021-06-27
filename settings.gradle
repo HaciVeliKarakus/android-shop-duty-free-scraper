@@ -1,0 +1,2 @@
+rootProject.name = "Antalya Duty Free"
+include ':app'
