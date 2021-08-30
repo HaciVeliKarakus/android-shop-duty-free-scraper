@@ -89,8 +89,14 @@ class ProductListAdapter(private val dataSet: ArrayList<*>, private val mContext
                 alertdialog.show()
             }
 
-            // ürün resmi yükleme
-            Picasso.get().load(item.imgSrc).fit().into(viewHolder.productImg)
+            try {
+                // ürün resmi yükleme
+                Picasso.get().load(item.imgSrc).fit().into(viewHolder.productImg)
+            }
+            catch (e:Exception){
+                e.printStackTrace()
+            }
+
 
             // ürünün bilgileri dinamik olarak oluşturulur
             for (i in item.infoList) {
