@@ -62,8 +62,9 @@ class ApiDutyFree(private var mContext: Context) {
         val brandName = mainLink.split("/").last()
         Jsoup.connect(mainLink)
             .get().run {
-                getElementsByClass("product-item").forEach { _ ->
-                    val productDetailLink = getElementsByClass("product-item-link").attr("href")
+                getElementsByClass("product-item").forEach { data ->
+                    val productDetailLink = data.getElementsByClass("product-item-link").attr("href")
+//                    println("link $data")
                     Jsoup.connect(productDetailLink).get().run {
                         getElementsByClass("product-block-main-wrapper").forEach { _ ->
 
@@ -88,22 +89,29 @@ class ApiDutyFree(private var mContext: Context) {
                                 val data = tw.select("td[class=col data]").text()
                                 infoList.add(InformationModel(label, data))
                             }
-                            productList.add(
-                                ProductModel(
-                                    brandName, name,
-                                    price,
-                                    imgSrc,
-                                    detail,
-                                    infoList
+                            productList.run {
+                                for (tw in table) {
+                                    val label = tw.select("th[class=col label]").text()
+                                    val data = tw.select("td[class=col data]").text()
+                                    infoList.add(InformationModel(label, data))
+                                }
+                                add(
+                                    ProductModel(
+                                        brandName, name,
+                                        price,
+                                        imgSrc,
+                                        detail,
+                                        infoList
+                                    )
                                 )
-                            )
+                            }
                         }
                     }
                 }
             }
     }
 
-    private suspend fun getBrandWithJsoup() = withContext(Dispatchers.IO) {
+    private suspend fun getBrandWithJsoup() = withContext(Dispatchers.Default) {
         // tüm markaların isimleri ve ürünler sayfası linki siteden çekilir
         Jsoup.connect("https://antalya.shopdutyfree.com/en/brandboutique/brand/all/#brands-listing%20row")
             .get().run {
